@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Description>A simple and lightweight modding framework.</Description>
+    <PackageProjectUrl>https://sanicbtw.github.io/aether-framework</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/SanicBTW/Aether-Framework</RepositoryUrl>
+    <Copyright>xhyabunny © 2024</Copyright>
+    <PackageTags>Modding, Framework</PackageTags>
+    <PackageReleaseNotes>First public release of Aether Framework.</PackageReleaseNotes>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <SignAssembly>False</SignAssembly>
+    <Authors>sanco</Authors>
+    <Company>xhyabunny</Company>
+  </PropertyGroup>
+
+</Project>
