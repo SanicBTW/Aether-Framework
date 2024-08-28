@@ -28,6 +28,10 @@ namespace AetherFramework
             EventManager.AddModRegistry(this);
         }
 
+        /// <summary>
+        /// Registers a new <see cref="IMod"/> in the current <see cref="ModRegistry"/>.
+        /// </summary>
+        /// <param name="newMod">The <see cref="IMod"/> to register.</param>
         public void RegisterMod(IMod newMod)
         {
             if (mods.Contains(newMod))
@@ -56,8 +60,13 @@ namespace AetherFramework
                 newMod.OnEnable();
         }
 
+        /// <summary>
+        /// Gets the enabled mods from the <see cref="IModConfigProvider"/>.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s that are enabled.</returns>
         public IEnumerable<IMod> GetEnabledMods() => mods.Where((mod) => enabledMods.Contains(mod.Manifest.Name));
 
+        /// <inheritdoc cref="IModEngine.EnableMod(string)"/>
         public IMod EnableMod(string modName)
         {
             IMod target = EnsureRegistry(modName);
@@ -76,8 +85,13 @@ namespace AetherFramework
             return target;
         }
 
+        /// <summary>
+        /// Gets the disabled mods from the <see cref="IModConfigProvider"/>.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s that are disabled.</returns>
         public IEnumerable<IMod> GetDisabledMods() => mods.Where((mod) => disabledMods.Contains(mod.Manifest.Name));
 
+        /// <inheritdoc cref="IModEngine.DisableMod(string)"/>
         public IMod DisableMod(string modName)
         {
             IMod target = EnsureRegistry(modName);
@@ -94,8 +108,17 @@ namespace AetherFramework
             return target;
         }
 
+        /// <summary>
+        /// Gets the current <see cref="IModConfigProvider"/> of the current <see cref="ModRegistry"/>.
+        /// </summary>
+        /// <returns>A reference to the used <see cref="IModConfigProvider"/>.</returns>
         public IModConfigProvider GetConfigProvider() => _config;
 
+        /// <summary>
+        /// Gets a list of <see cref="IMod"/>s that match the target intent.
+        /// </summary>
+        /// <param name="intent">The target intent we want to look for.</param>
+        /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s that match the <paramref name="intent"/>.</returns>
         public IEnumerable<IMod> GetModsByIntent(string intent) => mods.Where(mod => mod.Intents.Contains(intent));
 
         private IMod EnsureRegistry(string modName)
@@ -105,6 +128,11 @@ namespace AetherFramework
         }
 
         // Accessed through reflection, uses reflection inside, profit!!!
+        /// <summary>
+        /// Dynamically sets a value on the <see cref="ModRegistry"/>, usually a list, only used through reflection from the <see cref="IModConfigProvider"/>s.
+        /// </summary>
+        /// <param name="fieldName">The field to look for.</param>
+        /// <param name="value">The new value of the field, also asserting if the field value is the same as this one.</param>
         protected void dynamicSetList(string fieldName, IEnumerable<string> value)
         {
             Type type = typeof(ModRegistry);

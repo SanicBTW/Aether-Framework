@@ -10,9 +10,19 @@ namespace AetherFramework
     // (a day later) its actually a mix between prompts and my own cooked code,
     // apparently hash sets are faster sooo https://stackoverflow.com/a/10762995 we moving to them now (also keeping thread safety!!!)
 
+    /// <summary>
+    /// An enum representing the target event registry.
+    /// </summary>
     public enum EventRegistryType
     {
+        /// <summary>
+        /// The handler gets saved in the global handlers.
+        /// </summary>
         GLOBAL,
+
+        /// <summary>
+        /// The handler gets saved in the targeted handlers, focusing on an <see cref="IMod"/>.
+        /// </summary>
         TARGETED
     }
 
@@ -252,6 +262,11 @@ namespace AetherFramework
             CallOnHandlers(handlers, eventInstance);
         }
 
+        /// <summary>
+        /// Triggers an event based on an intent, invoking handlers for all the <see cref="IMod"/>s that have the intent.
+        /// </summary>
+        /// <param name="eventInstance">The targeted event instance to trigger.</param>
+        /// <param name="intent">The instance this event is targeted to.</param>
         public static void TriggerEventByIntent(TargetedEvent eventInstance, string intent)
         {
             if (modRegistries.Count == 0)

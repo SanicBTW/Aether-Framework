@@ -86,13 +86,16 @@ namespace AetherFramework
             return (T)(reg?.CreateInstance(args) ?? Activator.CreateInstance(typeof(T), args))!;
         }
 
+        /// <summary>
+        /// Event fired when <see cref="OverwriteClass{From, To}"/> gets called.
+        /// </summary>
         public static event Action<ClassRegistryItem> ClassOverwritten = null!;
 
         /// <summary>
         /// Overwrite a class with a new class.
         /// </summary>
-        /// <param name="from">The class to overwrite.</param>
-        /// <param name="to">The class to overwrite with.</param>
+        /// <typeparam name="From">The class to overwrite.</typeparam>
+        /// <typeparam name="To">The class to overwrite with.</typeparam>
         public static void OverwriteClass<From, To>() where From : class where To : class
         {
             classMap.TryGetValue(typeof(From), out ClassRegistryItem? reg);

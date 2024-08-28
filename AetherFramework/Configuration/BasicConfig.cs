@@ -25,6 +25,7 @@ namespace AetherFramework.Configuration
         private ModRegistry registry = null!; // xd
         private string configPath = "";
 
+        /// <inheritdoc cref="IModConfigProvider.Setup(string, ModRegistry)"/>
         public void Setup(string configFile, ModRegistry registry)
         {
             this.registry = registry;
@@ -37,6 +38,7 @@ namespace AetherFramework.Configuration
             Load();
         }
 
+        /// <inheritdoc cref="IModConfigProvider.Save"/>
         public void Save()
         {
             if (configPath == null)
@@ -95,6 +97,8 @@ namespace AetherFramework.Configuration
             File.WriteAllText(configPath, content);
         }
 
+        /// <inheritdoc cref="IModConfigProvider.Load"/>
+        /// <exception cref="Exception"></exception>
         public void Load()
         {
             string content = File.ReadAllText(configPath);
@@ -127,6 +131,7 @@ namespace AetherFramework.Configuration
             }
         }
 
+        /// <inheritdoc cref="IModConfigProvider.GetConfigType"/>
         public string GetConfigType() => "Basic Configuration (Default Provider)";
 
         private void setOnRegistry(string fieldName, IEnumerable<string> value)

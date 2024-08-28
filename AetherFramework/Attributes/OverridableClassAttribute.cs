@@ -6,6 +6,9 @@
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class OverridableClassAttribute : Attribute
     {
+        /// <summary>
+        /// An array of <see cref="Type"/>s to help the <see cref="ClassRegistry"/> create classes with arguments.
+        /// </summary>
         public object?[]? Arguments { get; }
 
         /// <summary>

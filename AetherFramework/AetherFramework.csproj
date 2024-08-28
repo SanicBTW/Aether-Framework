@@ -15,6 +15,8 @@
     <SignAssembly>False</SignAssembly>
     <Authors>sanco</Authors>
     <Company>xhyabunny</Company>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>

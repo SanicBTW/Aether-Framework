@@ -14,22 +14,31 @@ namespace AetherFramework
     {
         private readonly IModEngine _engine = null!;
 
-        /// <inheritdoc cref="IModEngine.LoadedMods"/>
+        /// <summary>
+        /// List of the current loaded <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
+        /// </summary>
         public IEnumerable<IMod> LoadedMods => _engine.LoadedMods;
 
-        /// <inheritdoc cref="IModEngine.EnabledMods"/>
+        /// <summary>
+        /// List of the enabled <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
+        /// </summary>
         public IEnumerable<IMod> EnabledMods => _engine.EnabledMods;
 
-        /// <inheritdoc cref="IModEngine.DisabledMods"/>
+        /// <summary>
+        /// List of the disabled <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
+        /// </summary>
         public IEnumerable<IMod> DisabledMods => _engine.DisabledMods;
 
-        /// <inheritdoc cref="IModEngine.ConfigurationProvider"/>
+        /// <summary>
+        /// The configuration provider type from this <see cref="ModLoader"/> usually coming from a <see cref="IModEngine"/>.
+        /// </summary>
         public string ConfigurationProvider => _engine.ConfigurationProvider;
 
         /// <summary>
         /// Loads all the <see cref="IMod"/>s available using the provided arguments to be as modular as possible.
         /// </summary>
         /// <param name="folder">The folder to scan, if null or empty it will scan the current folder to scan everything that extends <see cref="IMod"/>.</param>
+        /// <param name="filePrefix">The file prefix to target, this is useful to reduce the files to load and check for an <see cref="IMod"/>.</param>
         /// <param name="engine">The Modding Engine to use in THIS Mod Loader, each engine will load their respective files.</param>
         /// <param name="config">The Modding Configuration Provider to use in the provided <paramref name="engine"/>.</param>
         public ModLoader(string folder = "Mods", string filePrefix = "", IModEngine ?engine = null, IModConfigProvider? config = null)

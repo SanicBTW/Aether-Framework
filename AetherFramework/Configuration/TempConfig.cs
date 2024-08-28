@@ -12,6 +12,7 @@ namespace AetherFramework.Configuration
         private ModRegistry registry = null!;
         private Dictionary<string, IEnumerable<string>> mods = [];
 
+        /// <inheritdoc cref="IModConfigProvider.Setup(string, ModRegistry)"/>
         public void Setup(string configFile, ModRegistry registry)
         {
             this.registry = registry;
@@ -20,12 +21,14 @@ namespace AetherFramework.Configuration
             Load();
         }
 
+        /// <inheritdoc cref="IModConfigProvider.Save"/>
         public void Save()
         {
             mods["enabled"] = registry.GetEnabledMods().Select((mod) => mod.Manifest.Name);
             mods["disabled"] = registry.GetDisabledMods().Select((mod) => mod.Manifest.Name);
         }
 
+        /// <inheritdoc cref="IModConfigProvider.Load"/>
         public void Load()
         {
             Type type = typeof(ModRegistry);
@@ -37,6 +40,7 @@ namespace AetherFramework.Configuration
             method!.Invoke(registry, ["disabledMods", mods["disabled"]]);
         }
 
+        /// <inheritdoc cref="IModConfigProvider.GetConfigType"/>
         public string GetConfigType() => "Temporary Configuration (Saved in memory)";
     }
 }
