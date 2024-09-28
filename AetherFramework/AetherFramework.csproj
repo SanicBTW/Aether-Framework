@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/SanicBTW/Aether-Framework</RepositoryUrl>
     <Copyright>xhyabunny © 2024</Copyright>
     <PackageTags>Modding, Framework</PackageTags>
-    <PackageReleaseNotes>First public release of Aether Framework.</PackageReleaseNotes>
+    <PackageReleaseNotes>Overhauled the Class Registry system alongside some small improvements.</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <SignAssembly>False</SignAssembly>
@@ -17,6 +17,9 @@
     <Company>xhyabunny</Company>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+	<VersionPrefix>1.1.0</VersionPrefix>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
 
 </Project>

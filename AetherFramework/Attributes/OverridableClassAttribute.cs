@@ -7,17 +7,8 @@
     public class OverridableClassAttribute : Attribute
     {
         /// <summary>
-        /// An array of <see cref="Type"/>s to help the <see cref="ClassRegistry"/> create classes with arguments.
-        /// </summary>
-        public object?[]? Arguments { get; }
-
-        /// <summary>
         /// Add this <see cref="Attribute"/> to a class to mark it as "Overridable" by the Modding Framework.
         /// </summary>
-        /// <param name="args">The arguments of the class that is gonna be overriden.</param>
-        public OverridableClassAttribute(params object?[]? args)
-        {
-            Arguments = args;
-        }
+        public OverridableClassAttribute() { }
     }
 }
