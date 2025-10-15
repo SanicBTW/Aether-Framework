@@ -1,15 +1,14 @@
-﻿namespace AetherFramework.Data
-{
-    // previously i had an API Version variable but since I dont know how to do versioning and sshit I trashed the idea, wouldve been cool tho
-    // knowing this, the api shouldnt change that much to make all the mods work properly across versions of the application
+﻿using AetherFramework.Interfaces;
 
+namespace AetherFramework.Data
+{
     /// <summary>
     /// The Manifest Information the Mod will use for the <see cref="ModRegistry"/>.
     /// </summary>
     public record ModManifest
     {
         /// <summary>
-        /// The name of the mod, no "," allowed.
+        /// The name of the mod, depending on the <see cref="IModConfigProvider"/> used, it may not allow some characters.
         /// </summary>
         public string Name { get; set; } = "ModManifest";
 
@@ -26,13 +25,14 @@
         /// <summary>
         /// A list of intents to let the <see cref="EventManager"/> dispatch targeted mods more efficiently.
         /// <para>
-        /// Use the intents offered by the application the Modding Framework was implemented into.
+        /// Use the intents offered by the application you're working with.
         /// </para>
         /// </summary>
         public HashSet<string> Intents { get; set; } = [];
 
+        // dawg??
         /// <summary>
-        /// The version of the mod, if implemented it can be used to retrieve updates from some place.
+        /// The version of the mod, not really used in here but you can in your application.
         /// </summary>
         public Version Version { get; set; } = new(0, 0, 0, 0);
     }

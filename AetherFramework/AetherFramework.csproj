@@ -17,9 +17,9 @@
     <Company>xhyabunny</Company>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<VersionPrefix>1.1.0</VersionPrefix>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
-    <FileVersion>1.1.0.0</FileVersion>
+	<VersionPrefix>1.2.0-beta1</VersionPrefix>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
   </PropertyGroup>
 
 </Project>

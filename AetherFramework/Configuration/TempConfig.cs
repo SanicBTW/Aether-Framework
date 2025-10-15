@@ -1,6 +1,4 @@
 ﻿using AetherFramework.Interfaces;
-using System.Diagnostics;
-using System.Reflection;
 
 namespace AetherFramework.Configuration
 {
@@ -10,7 +8,10 @@ namespace AetherFramework.Configuration
     public class TempConfig : IModConfigProvider
     {
         private ModRegistry registry = null!;
-        private Dictionary<string, IEnumerable<string>> mods = [];
+        private readonly ConfigFile backerConfig = new();
+
+        /// <inheritdoc cref="IModConfigProvider.ProviderName"/>
+        public string ProviderName => "Temporary Configuration (Saved in memory)";
 
         /// <inheritdoc cref="IModConfigProvider.Setup(string, ModRegistry)"/>
         public void Setup(string configFile, ModRegistry registry)
@@ -24,23 +25,14 @@ namespace AetherFramework.Configuration
         /// <inheritdoc cref="IModConfigProvider.Save"/>
         public void Save()
         {
-            mods["enabled"] = registry.GetEnabledMods().Select((mod) => mod.Manifest.Name);
-            mods["disabled"] = registry.GetDisabledMods().Select((mod) => mod.Manifest.Name);
+            backerConfig.EnabledMods = [..registry.GetEnabledMods().Select((mod) => mod.Manifest.Name)];
+            backerConfig.DisabledMods = [..registry.GetDisabledMods().Select((mod) => mod.Manifest.Name)];
         }
 
         /// <inheritdoc cref="IModConfigProvider.Load"/>
-        public void Load()
-        {
-            Type type = typeof(ModRegistry);
-            MethodInfo method = type.GetMethod("dynamicSetList", BindingFlags.Instance | BindingFlags.NonPublic, [typeof(string), typeof(IEnumerable<string>)])!;
+        public ConfigFile Load() => backerConfig;
 
-            Debug.Assert(method != null, "Reflection failed.");
-
-            method!.Invoke(registry, ["enabledMods", mods["enabled"]]);
-            method!.Invoke(registry, ["disabledMods", mods["disabled"]]);
-        }
-
-        /// <inheritdoc cref="IModConfigProvider.GetConfigType"/>
-        public string GetConfigType() => "Temporary Configuration (Saved in memory)";
+        /// <inheritdoc cref="IModConfigProvider.Sanitize(string)"/>
+        public string Sanitize(string content) => content;
     }
 }

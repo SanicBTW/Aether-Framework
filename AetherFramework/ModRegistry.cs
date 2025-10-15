@@ -1,7 +1,6 @@
 ﻿using AetherFramework.Configuration;
 using AetherFramework.Interfaces;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace AetherFramework
 {
@@ -37,9 +36,8 @@ namespace AetherFramework
             if (mods.Contains(newMod))
                 return;
 
-            // Pipe is not allowed to be inside the mod's name because it is used for splitting and joining in the config file.
-            if (newMod.Manifest.Name.Contains('|'))
-                newMod.Manifest.Name = newMod.Manifest.Name.Replace('|', ' ');
+            // We let the configuration provider sanitize the content to fit their needs
+            newMod.Manifest.Name = _config.Sanitize(newMod.Manifest.Name);
 
             mods.Add(newMod);
             Debug.WriteLine($"Registered new mod! {newMod.Manifest.Name} by {newMod.Manifest.Author}, Version {newMod.Manifest.Version}.");
@@ -121,30 +119,24 @@ namespace AetherFramework
         /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s that match the <paramref name="intent"/>.</returns>
         public IEnumerable<IMod> GetModsByIntent(string intent) => mods.Where(mod => mod.Intents.Contains(intent));
 
-        private IMod EnsureRegistry(string modName)
-        {
-            IMod mod = mods.Where((mod) => mod.Manifest.Name == modName).First();
-            return mod ?? throw new Exception($"Requested mod \"{modName}\" couldn't be found on the registry, maybe it didn't get registered?");
-        }
-
-        // Accessed through reflection, uses reflection inside, profit!!!
         /// <summary>
-        /// Dynamically sets a value on the <see cref="ModRegistry"/>, usually a list, only used through reflection from the <see cref="IModConfigProvider"/>s.
+        /// Calls <see cref="IModConfigProvider.Load"/> to retrieve the saved configuration and apply it to the current <see cref="ModRegistry"/>.
+        /// <para>Should not be manually called.</para>
         /// </summary>
-        /// <param name="fieldName">The field to look for.</param>
-        /// <param name="value">The new value of the field, also asserting if the field value is the same as this one.</param>
-        protected void dynamicSetList(string fieldName, IEnumerable<string> value)
+        public void Refresh()
         {
-            Type type = typeof(ModRegistry);
-            FieldInfo field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic)!;
+            ConfigFile loaded = _config.Load();
 
-            Debug.Assert(field != null, "Reflection failed.");
+            enabledMods = loaded.EnabledMods;
+            disabledMods = loaded.DisabledMods;
 
-            // "Cannot convert string[] to List<string>" when skipping this step
-            List<string> conv = value.ToList();
-            field.SetValue(this, conv);
-
-            Debug.Assert(field.GetValue(this) == conv, "Reflection assign failed.");
+            if (loaded is PresetConfigFile presetConfig)
+            {
+                Debug.WriteLine(presetConfig.CurrentPreset);
+            }
         }
+
+        private IMod EnsureRegistry(string modName) =>
+            mods.First(mod => mod.Manifest.Name == modName) ?? throw new Exception($"Mod {modName} not found on the registry.");
     }
 }

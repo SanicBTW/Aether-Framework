@@ -8,7 +8,7 @@ namespace AetherFramework
     // TODO: Add More Modding Engines? (Wren, Luau, Roslyn) tho that would cost like double the code for supporting the engine properly
 
     /// <summary>
-    /// The heart of the Modding Framework.
+    /// The heart of Aether Framework.
     /// </summary>
     public class ModLoader
     {
@@ -44,7 +44,7 @@ namespace AetherFramework
         public ModLoader(string folder = "Mods", string filePrefix = "", IModEngine ?engine = null, IModConfigProvider? config = null)
         {
             string loadPath = Path.Join([AppDomain.CurrentDomain.BaseDirectory, folder]);
-            
+
             // if the folder is empty or null is a risky thing to do depending on the modding engine
             // on the assembly engine its going to scan all the .dlls inside the output folder,
             // so maybe providing a file prefix could help reducing the assemblies to load to look for IMods

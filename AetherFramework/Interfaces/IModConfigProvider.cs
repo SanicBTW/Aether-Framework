@@ -1,10 +1,17 @@
-﻿namespace AetherFramework.Interfaces
+﻿using AetherFramework.Configuration;
+
+namespace AetherFramework.Interfaces
 {
     /// <summary>
     /// Interface for the <see cref="ModRegistry"/> to be able to save configuration.
     /// </summary>
     public interface IModConfigProvider
     {
+        /// <summary>
+        /// The name of this <see cref="IModConfigProvider"/> implementation.
+        /// </summary>
+        string ProviderName { get; }
+
         /// <summary>
         /// Setups the configuration file in the disk.
         /// </summary>
@@ -20,12 +27,13 @@
         /// <summary>
         /// Loads the configuration to <see cref="ModRegistry"/>.
         /// </summary>
-        void Load();
+        ConfigFile Load();
 
         /// <summary>
-        /// The configuration provider type.
+        /// Sanitizes the given string to fit the <see cref="IModConfigProvider"/>s rules. 
         /// </summary>
-        /// <returns>Returns this <see cref="IModConfigProvider"/> implementation name. (In a human readable way)</returns>
-        string GetConfigType();
+        /// <param name="content">The string to sanitize.</param>
+        /// <returns>A sanitized string used for configuration or display purposes.</returns>
+        string Sanitize(string content);
     }
 }
