@@ -1,0 +1,39 @@
+<Project>
+    <PropertyGroup Label="Package Information">
+        <PackageProjectUrl>https://github.com/SanicBTW/Aether-Framework</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/SanicBTW/Aether-Framework</RepositoryUrl>
+
+        <Title>Aether Framework</Title>
+        <Description>A simple and lightweight modding framework.</Description>
+        <Authors>sanco</Authors>
+
+        <Copyright>xhyabunny © 2025</Copyright>
+        <Company>xhyabunny</Company>
+        <PackageTags>Modding, Framework</PackageTags>
+
+        <PackageReleaseNotes>Overhauled the configuration system and improved the Assembly engine.</PackageReleaseNotes>
+
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+        <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+
+        <VersionPrefix>1.2.0-beta1</VersionPrefix>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+        <FileVersion>$(AssemblyVersion)</FileVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Label="SourceLink Support">
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\"/>
+        <None Include="..\LICENSE.txt" Pack="true" PackagePath="\"/>
+    </ItemGroup>
+</Project>

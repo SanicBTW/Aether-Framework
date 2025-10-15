@@ -4,22 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Description>A simple and lightweight modding framework.</Description>
-    <PackageProjectUrl>https://sanicbtw.github.io/aether-framework</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/SanicBTW/Aether-Framework</RepositoryUrl>
-    <Copyright>xhyabunny © 2024</Copyright>
-    <PackageTags>Modding, Framework</PackageTags>
-    <PackageReleaseNotes>Overhauled the Class Registry system alongside some small improvements.</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <SignAssembly>False</SignAssembly>
-    <Authors>sanco</Authors>
-    <Company>xhyabunny</Company>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-	<VersionPrefix>1.2.0-beta1</VersionPrefix>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <FileVersion>1.2.0.0</FileVersion>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DocumentationFile>bin\Release\AetherFramework.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
 
 </Project>
