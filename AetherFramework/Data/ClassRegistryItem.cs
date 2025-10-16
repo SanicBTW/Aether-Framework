@@ -13,8 +13,8 @@
     /// </summary>
     public class ClassRegistryItem
     {
-        private Type defaultClass;
-        private Type currentClass;
+        private readonly Type _defaultClass;
+        private Type _currentClass;
 
         /// <summary>
         /// Creates a new instance of ClassRegistryItem with a default class type.
@@ -22,39 +22,39 @@
         /// <param name="def">The default class type.</param>
         public ClassRegistryItem(Type def)
         {
-            defaultClass = def;
-            currentClass = def;
+            _defaultClass = def;
+            _currentClass = def;
         }
 
         /// <summary>
         /// Gets the current class type of the item.
         /// </summary>
         /// <returns>The current class type of the item.</returns>
-        public Type GetCurrentClass() => currentClass!;
+        public Type GetCurrentClass() => _currentClass;
 
         /// <summary>
         /// Gets the default class type of the item.
         /// </summary>
         /// <returns>The default class type of the item.</returns>
-        public Type GetDefaultClass() => defaultClass!;
+        public Type GetDefaultClass() => _defaultClass;
 
         /// <summary>
         /// Sets the class type of the item.
         /// </summary>
         /// <param name="cls">The class type of the item.</param>
         /// <returns>The new class type of the item.</returns>
-        public Type SetClass(Type cls) => currentClass = cls;
+        public Type SetClass(Type cls) => _currentClass = cls;
 
         /// <summary>
         /// Resets the class type of the item to the default one.
         /// </summary>
-        public void ResetClass() => currentClass = defaultClass;
+        public void ResetClass() => _currentClass = _defaultClass;
 
         /// <summary>
         /// Creates a new instance of the class.
         /// </summary>
         /// <param name="args">The arguments to pass to the constructor.</param>
         /// <returns>The new instance of the class.</returns>
-        public object CreateInstance(params object?[]? args) => Activator.CreateInstance(currentClass, args)!;
+        public object CreateInstance(params object?[]? args) => Activator.CreateInstance(_currentClass, args)!;
     }
 }

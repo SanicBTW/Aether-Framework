@@ -30,10 +30,10 @@ namespace AetherFramework.Interfaces
         ConfigFile Load();
 
         /// <summary>
-        /// Sanitizes the given string to fit the <see cref="IModConfigProvider"/>s rules. 
+        /// Sanitizes the given mod name to fit the <see cref="IModConfigProvider"/>s rules. 
         /// </summary>
-        /// <param name="content">The string to sanitize.</param>
-        /// <returns>A sanitized string used for configuration or display purposes.</returns>
-        string Sanitize(string content);
+        /// <param name="content">The mod name to sanitize.</param>
+        /// <returns>A sanitized mod name used for configuration or display purposes.</returns>
+        string SanitizeModName(string content) => content;
     }
 }

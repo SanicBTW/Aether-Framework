@@ -3,7 +3,7 @@
     /// <summary>
     /// Attribute used to assist <see cref="ClassRegistry"/> on generic instances.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class GenericAssistAttribute : Attribute
     {
         /// <summary>

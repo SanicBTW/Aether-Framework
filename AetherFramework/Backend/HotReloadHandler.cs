@@ -15,13 +15,9 @@ namespace AetherFramework.Backend
         public static event Action<Type[]?> OnHotReload = null!;
 
         private static void ClearCache(Type[]? types)
-        {
-            OnCacheClear?.Invoke(types);
-        }
+            => OnCacheClear(types);
 
         private static void UpdateApplication(Type[]? types)
-        {
-            OnHotReload?.Invoke(types);
-        }
+            => OnHotReload(types);
     }
 }

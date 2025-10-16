@@ -12,7 +12,7 @@ namespace AetherFramework
     /// </summary>
     public class ModLoader
     {
-        private readonly IModEngine _engine = null!;
+        private readonly IModEngine _engine;
 
         /// <summary>
         /// List of the current loaded <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
@@ -41,7 +41,10 @@ namespace AetherFramework
         /// <param name="filePrefix">The file prefix to target, this is useful to reduce the files to load and check for an <see cref="IMod"/>.</param>
         /// <param name="engine">The Modding Engine to use in THIS Mod Loader, each engine will load their respective files.</param>
         /// <param name="config">The Modding Configuration Provider to use in the provided <paramref name="engine"/>.</param>
-        public ModLoader(string folder = "Mods", string filePrefix = "", IModEngine ?engine = null, IModConfigProvider? config = null)
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+        // i believe IT is getting set before exiting the constructor, since the passed engine IS null by default, it will fallback into Assembly Engine, im gonna go lucid bruh
+        public ModLoader(string folder = "Mods", string filePrefix = "", IModEngine? engine = null, IModConfigProvider? config = null)
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
             string loadPath = Path.Join([AppDomain.CurrentDomain.BaseDirectory, folder]);
 
@@ -57,14 +60,14 @@ namespace AetherFramework
                 return;
             }
 
-            _engine ??= engine ?? new AssemblyEngine(config);
+            _engine = engine ?? new AssemblyEngine(config);
             _engine.LoadMods(loadPath, filePrefix);
 
             // The mod should handle (?) the hot reloading of the classes they modify, maybe it should be done automatically here but we are letting the mod handle it as freely as it wants
             // bro im so fucking dumb i left over a for loop of the mods in this listener so the handlers would be like O(N)
             // O being the amount of mods and N the amount of handlers active for the event :skull:
-            HotReloadHandler.OnCacheClear += (types) => { EventManager.TriggerGlobalEvent(new HRCacheClearEvent(types!)); };
-            HotReloadHandler.OnHotReload += (types) => { EventManager.TriggerGlobalEvent(new HRUpdateApplicationEvent(types!)); };
+            HotReloadHandler.OnCacheClear += types => { EventManager.TriggerGlobalEvent(new HRCacheClearEvent(types!)); };
+            HotReloadHandler.OnHotReload += types => { EventManager.TriggerGlobalEvent(new HRUpdateApplicationEvent(types!)); };
         }
 
         /// <inheritdoc cref="IModEngine.EnableMod(string)"/>

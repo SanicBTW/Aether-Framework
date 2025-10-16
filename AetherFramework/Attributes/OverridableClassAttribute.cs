@@ -3,7 +3,7 @@
     /// <summary>
     /// Attribute used to mark a class as "Overridable" in the <see cref="ClassRegistry"/> while being loaded through <see cref="ClassRegistry.RegisterOverridableClasses(System.Reflection.Assembly)"/>.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     public class OverridableClassAttribute : Attribute
     {
         /// <summary>
