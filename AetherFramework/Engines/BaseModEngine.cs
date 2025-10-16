@@ -19,13 +19,10 @@ namespace AetherFramework.Engines
         /// </summary>
         protected ModRegistry Registry;
 
-        /// <inheritdoc cref="IModEngine.LoadedMods"/>
         public IEnumerable<IMod> LoadedMods => [..EnabledMods, ..DisabledMods];
 
-        /// <inheritdoc cref="IModEngine.EnabledMods"/>
         public IEnumerable<IMod> EnabledMods => Registry.GetEnabledMods();
 
-        /// <inheritdoc cref="IModEngine.DisabledMods"/>
         public IEnumerable<IMod> DisabledMods => Registry.GetDisabledMods();
 
         string IModEngine.ConfigurationProvider => Registry.GetConfigProvider().ProviderName;
@@ -35,17 +32,15 @@ namespace AetherFramework.Engines
         /// </summary>
         /// <param name="configFile">The configuration file passed to the <see cref="ModRegistry"/>.</param>
         /// <param name="config">A custom configuration provider for the <see cref="ModRegistry"/>.</param>
-        public BaseModEngine(string configFile = ".baseengine", IModConfigProvider ?config = null)
+        public BaseModEngine(string configFile = "aether_config.json", IModConfigProvider ?config = null)
         {
             Registry = new ModRegistry(configFile, config);
         }
 
         void IModEngine.LoadMods(string path, string filePrefix) => throw new NotImplementedException("This method should be overriden in engines extending this class.");
 
-        /// <inheritdoc cref="IModEngine.EnableMod(string)"/>
         public IMod EnableMod(string modName) => Registry.EnableMod(modName);
 
-        /// <inheritdoc cref="IModEngine.DisableMod(string)"/>
         public IMod DisableMod(string modName) => Registry.DisableMod(modName);
     }
 }

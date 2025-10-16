@@ -8,60 +8,53 @@ namespace AetherFramework.Configuration
     /// </summary>
     public class BasicConfig : IModConfigProvider
     {
-        private static JsonSerializerOptions JSON_OPTIONS => new() { WriteIndented = true };
+        private static JsonSerializerOptions JsonOptions => new() { WriteIndented = true };
 
-        private ModRegistry registry = null!; // xd
-        private string configPath = "";
+        private ModRegistry _registry = null!;
+        private string _configPath = "";
 
         // gets used on save calls and load calls to avoid creating new instances
-        private PresetConfigFile backerConfig = new();
+        private PresetConfigFile _backerConfig = new();
 
-        /// <inheritdoc cref="IModConfigProvider.ProviderName"/>
         public string ProviderName => "Basic Configuration (Default Provider)";
 
-        /// <inheritdoc cref="IModConfigProvider.Setup(string, ModRegistry)"/>
         public void Setup(string configFile, ModRegistry registry)
         {
-            this.registry = registry;
+            _registry = registry;
 
-            configPath = Path.Join([AppDomain.CurrentDomain.BaseDirectory, configFile]);
-            if (!File.Exists(configPath))
+            _configPath = Path.Join([AppDomain.CurrentDomain.BaseDirectory, configFile]);
+            if (!File.Exists(_configPath))
                 Save(); // we only call save during setup to format the file properly
 
             // since load is only called once, we call refresh to call load from here, avoiding having to use reflection
             registry.Refresh();
         }
 
-        /// <inheritdoc cref="IModConfigProvider.Save"/>
         public void Save()
         {
-            if (configPath == null)
+            if (_configPath == null)
                 throw new Exception("Configuration path was null, did you call \"Setup\"?");
 
-            backerConfig.EnabledMods = [.. registry.GetEnabledMods().Select((mod) => mod.Manifest.Name)];
-            backerConfig.DisabledMods = [.. registry.GetDisabledMods().Select((mod) => mod.Manifest.Name)];
+            _backerConfig.EnabledMods = [.. _registry.GetEnabledMods().Select(mod => mod.Manifest.Name)];
+            _backerConfig.DisabledMods = [.. _registry.GetDisabledMods().Select(mod => mod.Manifest.Name)];
 
             // yeah writes the whole file each time save gets called because this shi stinks lol
-            string json = JsonSerializer.Serialize(backerConfig, JSON_OPTIONS);
-            File.WriteAllText(configPath, json);
+            string json = JsonSerializer.Serialize(_backerConfig, JsonOptions);
+            File.WriteAllText(_configPath, json);
         }
 
-        /// <inheritdoc cref="IModConfigProvider.Load"/>
         public ConfigFile Load()
         {
-            string content = File.ReadAllText(configPath);
-            backerConfig = JsonSerializer.Deserialize<PresetConfigFile>(content) ?? new();
+            string content = File.ReadAllText(_configPath);
+            _backerConfig = JsonSerializer.Deserialize<PresetConfigFile>(content) ?? new PresetConfigFile();
 
             // TODO: Parse content more in-depth to avoid manipulating the file and missing the keys, tho it can be unnecessary
             // maybe the user wants to change something inside of it like refreshing the mod list or presets, yo thats a good idea im gonna implement it
             // 29/11/2024
-
             // 30/11/2024 - ok so im working on the idea now
+            // 16/10/2025 - uhh took me a whole year to come back to im so sorry it took me so long to finish such a good idea bruh
 
-            return backerConfig;
+            return _backerConfig;
         }
-
-        /// <inheritdoc cref="IModConfigProvider.Sanitize(string)"/>
-        public string Sanitize(string content) => content;
     }
 }
