@@ -18,12 +18,12 @@ namespace AetherFramework
         /// <summary>
         /// The handler gets saved in the global handlers.
         /// </summary>
-        GLOBAL,
+        Global,
 
         /// <summary>
         /// The handler gets saved in the targeted handlers, focusing on an <see cref="IMod"/>.
         /// </summary>
-        TARGETED
+        Targeted
     }
 
     /// <summary>
@@ -33,14 +33,14 @@ namespace AetherFramework
     public static class EventManager
     {
         // Dictionary to store global event handlers by event type
-        private static readonly ConcurrentDictionary<Type, HashSet<Delegate>> globalEvents = [];
+        private static readonly ConcurrentDictionary<Type, HashSet<Delegate>> global_events = [];
 
         // Dictionary to store targeted event handlers by mod and event type
         // Maybe instead of saving mods, we save the intent of the mod?
-        private static readonly ConcurrentDictionary<IMod, ConcurrentDictionary<Type, HashSet<Delegate>>> targetedEvents = [];
+        private static readonly ConcurrentDictionary<IMod, ConcurrentDictionary<Type, HashSet<Delegate>>> targeted_events = [];
 
         // HashSet of all the mod registries created in the whole modding framework.
-        private static readonly HashSet<ModRegistry> modRegistries = [];
+        private static readonly HashSet<ModRegistry> mod_registries = [];
 
         // For logging and monitoring
         private static Action<string> logger = msg => Debug.WriteLine(msg); // Default logger to the Debug Output
@@ -53,22 +53,22 @@ namespace AetherFramework
         /// <param name="handler">The method that handles the event.</param>
         /// <param name="mod">
         ///     <para> The mod that the event is targeted at. </para>
-        ///     Required argument when the <paramref name="registry"/> is <see cref="EventRegistryType.TARGETED"/>.
+        ///     Required argument when the <paramref name="registry"/> is <see cref="EventRegistryType.Targeted"/>.
         /// </param>
         public static void Register<T>(EventRegistryType registry, Action<T> handler, IMod? mod = null!) where T : Event
         {
             ArgumentNullException.ThrowIfNull(handler);
-            if (registry == EventRegistryType.TARGETED)
+            if (registry == EventRegistryType.Targeted)
                 ArgumentNullException.ThrowIfNull(mod);
 
             switch (registry)
             {
-                case EventRegistryType.GLOBAL:
-                    RegisterGlobalHandler(handler);
+                case EventRegistryType.Global:
+                    registerGlobalHandler(handler);
                     break;
 
-                case EventRegistryType.TARGETED:
-                    RegisterTargetedHandler(mod!, handler);
+                case EventRegistryType.Targeted:
+                    registerTargetedHandler(mod!, handler);
                     break;
             }
         }
@@ -81,22 +81,22 @@ namespace AetherFramework
         /// <param name="handler">The method that handles the event.</param>
         /// <param name="mod">
         ///     <para> The mod that the event is targeted at. </para>
-        ///     Required argument when the <paramref name="registry"/> is <see cref="EventRegistryType.TARGETED"/>.
+        ///     Required argument when the <paramref name="registry"/> is <see cref="EventRegistryType.Targeted"/>.
         /// </param>
         public static void Unregister<T>(EventRegistryType registry, Action<T> handler, IMod? mod = null!) where T : Event
         {
             ArgumentNullException.ThrowIfNull(handler);
-            if (registry == EventRegistryType.TARGETED)
+            if (registry == EventRegistryType.Targeted)
                 ArgumentNullException.ThrowIfNull(mod);
 
             switch (registry)
             {
-                case EventRegistryType.GLOBAL:
-                    UnregisterGlobalHandler(handler);
+                case EventRegistryType.Global:
+                    unregisterGlobalHandler(handler);
                     break;
 
-                case EventRegistryType.TARGETED:
-                    UnregisterTargetedHandler(mod!, handler);
+                case EventRegistryType.Targeted:
+                    unregisterTargetedHandler(mod!, handler);
                     break;
             }
         }
@@ -104,27 +104,27 @@ namespace AetherFramework
         /// <summary>
         /// Sets the logger action used for logging event-related activities.
         /// </summary>
-        /// <param name="logger">The logger action.</param>
-        public static void SetLogger(Action<string> logger) => logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        /// <param name="newLogger">The logger action.</param>
+        public static void SetLogger(Action<string> newLogger) => logger = newLogger ?? throw new ArgumentNullException(nameof(newLogger));
 
         /// <summary>
         /// Adds a new <see cref="ModRegistry"/> to the <see cref="EventManager"/> for <see cref="IMod"/> resolutions on event triggering.
         /// </summary>
         /// <param name="newRegistry">A new <see cref="ModRegistry"/> created from a <see cref="IModEngine"/>.</param>
-        public static void AddModRegistry(ModRegistry newRegistry) => modRegistries.Add(newRegistry);
+        public static void AddModRegistry(ModRegistry newRegistry) => mod_registries.Add(newRegistry);
 
         /// <summary>
         /// Registers a handler for a global event of a specific type.
         /// </summary>
         /// <typeparam name="T">The type of event to handle.</typeparam>
         /// <param name="handler">The method that handles the event.</param>
-        private static void RegisterGlobalHandler<T>(Action<T> handler) where T : Event
+        private static void registerGlobalHandler<T>(Action<T> handler) where T : Event
         {
             ArgumentNullException.ThrowIfNull(handler);
 
             Type eventType = typeof(T);
             // Add or update the global event handlers dictionary.
-            globalEvents.AddOrUpdate(eventType,
+            global_events.AddOrUpdate(eventType,
                 _ => [handler],
                 (_, bag) =>
                 {
@@ -135,7 +135,7 @@ namespace AetherFramework
                     return bag;
                 });
 
-            logger?.Invoke($"Registered global event handler for {eventType.Name}.");
+            logger($"Registered global event handler for {eventType.Name}.");
         }
 
         /// <summary>
@@ -143,13 +143,13 @@ namespace AetherFramework
         /// </summary>
         /// <typeparam name="T">The type of event to unregister.</typeparam>
         /// <param name="handler">The handler to remove.</param>
-        private static void UnregisterGlobalHandler<T>(Action<T> handler) where T : Event
+        private static void unregisterGlobalHandler<T>(Action<T> handler) where T : Event
         {
             ArgumentNullException.ThrowIfNull(handler);
 
             Type eventType = typeof(T);
 
-            if (!globalEvents.TryGetValue(eventType, out var handlers))
+            if (!global_events.TryGetValue(eventType, out var handlers))
                 return;
 
             lock (handlers)
@@ -157,10 +157,10 @@ namespace AetherFramework
                 handlers.Remove(handler);
 
                 if (handlers.Count == 0)
-                    globalEvents.TryRemove(eventType, out _);
+                    global_events.TryRemove(eventType, out _);
             }
 
-            logger?.Invoke($"Unregistered global event handler for {eventType.Name}.");
+            logger($"Unregistered global event handler for {eventType.Name}.");
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace AetherFramework
             ArgumentNullException.ThrowIfNull(eventInstance);
 
             // Check if there are handlers registered for this event type
-            if (!globalEvents.TryGetValue(eventInstance.GetType(), out var handlers))
+            if (!global_events.TryGetValue(eventInstance.GetType(), out var handlers))
                 return;
 
             CallOnHandlers(handlers, eventInstance);
@@ -186,14 +186,14 @@ namespace AetherFramework
         /// <typeparam name="T">The type of event to handle.</typeparam>
         /// <param name="mod">The mod that the event is targeted at.</param>
         /// <param name="handler">The method that handles the event.</param>
-        private static void RegisterTargetedHandler<T>(IMod mod, Action<T> handler) where T : Event
+        private static void registerTargetedHandler<T>(IMod mod, Action<T> handler) where T : Event
         {
             ArgumentNullException.ThrowIfNull(mod);
             ArgumentNullException.ThrowIfNull(handler);
 
             Type eventType = typeof(T);
 
-            var modHandlers = targetedEvents.GetOrAdd(mod, _ => []);
+            var modHandlers = targeted_events.GetOrAdd(mod, _ => []);
 
             modHandlers.AddOrUpdate(eventType,
                 _ => [handler],
@@ -206,7 +206,7 @@ namespace AetherFramework
                     return bag;
                 });
 
-            logger?.Invoke($"Registered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
+            logger($"Registered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
         }
 
         /// <summary>
@@ -215,12 +215,12 @@ namespace AetherFramework
         /// <typeparam name="T">The type of event to unregister.</typeparam>
         /// <param name="mod">The mod that the event is targeted at.</param>
         /// <param name="handler">The handler to remove.</param>
-        private static void UnregisterTargetedHandler<T>(IMod mod, Action<T> handler) where T : Event
+        private static void unregisterTargetedHandler<T>(IMod mod, Action<T> handler) where T : Event
         {
             ArgumentNullException.ThrowIfNull(mod);
             ArgumentNullException.ThrowIfNull(handler);
 
-            if (!targetedEvents.TryGetValue(mod, out var modHandlers))
+            if (!targeted_events.TryGetValue(mod, out var modHandlers))
                 return;
 
             Type eventType = typeof(T);
@@ -237,11 +237,11 @@ namespace AetherFramework
                     modHandlers.TryRemove(eventType, out _);
 
                     if (modHandlers.IsEmpty)
-                        targetedEvents.TryRemove(mod, out _);
+                        targeted_events.TryRemove(mod, out _);
                 }
             }
 
-            logger?.Invoke($"Unregistered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
+            logger($"Unregistered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
         }
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace AetherFramework
             ArgumentNullException.ThrowIfNull(eventInstance);
             ArgumentNullException.ThrowIfNull(eventInstance.TargetMod);
 
-            if (!targetedEvents.TryGetValue(eventInstance.TargetMod, out var modHandlers))
+            if (!targeted_events.TryGetValue(eventInstance.TargetMod, out var modHandlers))
                 return;
 
             if (!modHandlers.TryGetValue(eventInstance.GetType(), out var handlers))
@@ -269,9 +269,9 @@ namespace AetherFramework
         /// <param name="intent">The instance this event is targeted to.</param>
         public static void TriggerEventByIntent(TargetedEvent eventInstance, string intent)
         {
-            if (modRegistries.Count == 0)
+            if (mod_registries.Count == 0)
             {
-                logger?.Invoke($"There are no Mod Registries available");
+                logger($"There are no Mod Registries available");
                 return;
             }
 
@@ -280,11 +280,11 @@ namespace AetherFramework
 
             if (eventInstance.TargetMod != null)
             {
-                logger?.Invoke($"Cannot dispatch a TargetedEvent by an Intent if the mod inside the TargetedEvent isn't null");
+                logger($"Cannot dispatch a TargetedEvent by an Intent if the mod inside the TargetedEvent isn't null");
                 return;
             }
 
-            foreach (ModRegistry registry in modRegistries)
+            foreach (ModRegistry registry in mod_registries)
             {
                 IEnumerable<IMod> targetMods = registry.GetModsByIntent(intent);
                 foreach (IMod mod in targetMods)
@@ -296,7 +296,7 @@ namespace AetherFramework
                     }
                     else
                     {
-                        logger?.Invoke($"Event is not a TargetedEvent: {eventInstance.GetType()}");
+                        logger($"Event is not a TargetedEvent: {eventInstance.GetType()}");
                         break;
                     }
 
@@ -321,7 +321,7 @@ namespace AetherFramework
                 }
                 catch (Exception ex)
                 {
-                    logger?.Invoke($"Exception while dispatching handlers for {eventInstance.GetType().Name}: {ex}");
+                    logger($"Exception while dispatching handlers for {eventInstance.GetType().Name}: {ex}");
                 }
             }
         }

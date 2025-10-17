@@ -12,27 +12,29 @@ namespace AetherFramework
     /// </summary>
     public class ModLoader
     {
-        private readonly IModEngine _engine;
+        // i believe IT is getting set before exiting the constructor, since the passed engine IS null by default, it will fallback into Assembly Engine, im gonna go lucid bruh
+        // instead of adding pragma lets just mark the field to non null
+        private readonly IModEngine engine = null!;
 
         /// <summary>
         /// List of the current loaded <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
         /// </summary>
-        public IEnumerable<IMod> LoadedMods => _engine.LoadedMods;
+        public IEnumerable<IMod> LoadedMods => engine.LoadedMods;
 
         /// <summary>
         /// List of the enabled <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
         /// </summary>
-        public IEnumerable<IMod> EnabledMods => _engine.EnabledMods;
+        public IEnumerable<IMod> EnabledMods => engine.EnabledMods;
 
         /// <summary>
         /// List of the disabled <see cref="IMod"/>s in the current <see cref="ModLoader"/>.
         /// </summary>
-        public IEnumerable<IMod> DisabledMods => _engine.DisabledMods;
+        public IEnumerable<IMod> DisabledMods => engine.DisabledMods;
 
         /// <summary>
         /// The configuration provider type from this <see cref="ModLoader"/> usually coming from a <see cref="IModEngine"/>.
         /// </summary>
-        public string ConfigurationProvider => _engine.ConfigurationProvider;
+        public string ConfigurationProvider => engine.ConfigurationProvider;
 
         /// <summary>
         /// Loads all the <see cref="IMod"/>s available using the provided arguments to be as modular as possible.
@@ -41,10 +43,7 @@ namespace AetherFramework
         /// <param name="filePrefix">The file prefix to target, this is useful to reduce the files to load and check for an <see cref="IMod"/>.</param>
         /// <param name="engine">The Modding Engine to use in THIS Mod Loader, each engine will load their respective files.</param>
         /// <param name="config">The Modding Configuration Provider to use in the provided <paramref name="engine"/>.</param>
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-        // i believe IT is getting set before exiting the constructor, since the passed engine IS null by default, it will fallback into Assembly Engine, im gonna go lucid bruh
         public ModLoader(string folder = "Mods", string filePrefix = "", IModEngine? engine = null, IModConfigProvider? config = null)
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
         {
             string loadPath = Path.Join([AppDomain.CurrentDomain.BaseDirectory, folder]);
 
@@ -60,20 +59,20 @@ namespace AetherFramework
                 return;
             }
 
-            _engine = engine ?? new AssemblyEngine(config);
-            _engine.LoadMods(loadPath, filePrefix);
+            this.engine = engine ?? new AssemblyEngine(config);
+            this.engine.LoadMods(loadPath, filePrefix);
 
             // The mod should handle (?) the hot reloading of the classes they modify, maybe it should be done automatically here but we are letting the mod handle it as freely as it wants
             // bro im so fucking dumb i left over a for loop of the mods in this listener so the handlers would be like O(N)
             // O being the amount of mods and N the amount of handlers active for the event :skull:
-            HotReloadHandler.OnCacheClear += types => { EventManager.TriggerGlobalEvent(new HRCacheClearEvent(types!)); };
-            HotReloadHandler.OnHotReload += types => { EventManager.TriggerGlobalEvent(new HRUpdateApplicationEvent(types!)); };
+            HotReloadHandler.OnCacheClear += types => { EventManager.TriggerGlobalEvent(new HotReloadEvent(types)); };
+            HotReloadHandler.OnHotReload += types => { EventManager.TriggerGlobalEvent(new HotReloadEvent(newTypes: types)); };
         }
 
         /// <inheritdoc cref="IModEngine.EnableMod(string)"/>
-        public IMod EnableMod(string modName) => _engine.EnableMod(modName);
+        public IMod EnableMod(string modName) => engine.EnableMod(modName);
 
         /// <inheritdoc cref="IModEngine.DisableMod(string)"/>
-        public IMod DisableMod(string modName) => _engine.DisableMod(modName);
+        public IMod DisableMod(string modName) => engine.DisableMod(modName);
     }
 }
