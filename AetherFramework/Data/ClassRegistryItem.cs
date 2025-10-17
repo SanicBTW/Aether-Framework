@@ -1,4 +1,6 @@
-﻿namespace AetherFramework.Data
+﻿using JetBrains.Annotations;
+
+namespace AetherFramework.Data
 {
     // https://github.com/kwfnf/kfunkin/blob/master/source/kfunkin/modding/ClassRegistryItem.hx
     // this class was meant to be generic like mki's haxe implementation but failed horribly due to casting on C# and losing the generic data on the way
@@ -13,8 +15,8 @@
     /// </summary>
     public class ClassRegistryItem
     {
-        private readonly Type _defaultClass;
-        private Type _currentClass;
+        private readonly Type defaultClass;
+        private Type currentClass;
 
         /// <summary>
         /// Creates a new instance of ClassRegistryItem with a default class type.
@@ -22,39 +24,42 @@
         /// <param name="def">The default class type.</param>
         public ClassRegistryItem(Type def)
         {
-            _defaultClass = def;
-            _currentClass = def;
+            defaultClass = def;
+            currentClass = def;
         }
 
         /// <summary>
         /// Gets the current class type of the item.
         /// </summary>
         /// <returns>The current class type of the item.</returns>
-        public Type GetCurrentClass() => _currentClass;
+        [UsedImplicitly]
+        public Type GetCurrentClass() => currentClass;
 
         /// <summary>
         /// Gets the default class type of the item.
         /// </summary>
         /// <returns>The default class type of the item.</returns>
-        public Type GetDefaultClass() => _defaultClass;
+        [UsedImplicitly]
+        public Type GetDefaultClass() => defaultClass;
 
         /// <summary>
         /// Sets the class type of the item.
         /// </summary>
         /// <param name="cls">The class type of the item.</param>
         /// <returns>The new class type of the item.</returns>
-        public Type SetClass(Type cls) => _currentClass = cls;
+        [UsedImplicitly]
+        public Type SetClass(Type cls) => currentClass = cls;
 
         /// <summary>
         /// Resets the class type of the item to the default one.
         /// </summary>
-        public void ResetClass() => _currentClass = _defaultClass;
+        public void ResetClass() => currentClass = defaultClass;
 
         /// <summary>
         /// Creates a new instance of the class.
         /// </summary>
         /// <param name="args">The arguments to pass to the constructor.</param>
         /// <returns>The new instance of the class.</returns>
-        public object CreateInstance(params object?[]? args) => Activator.CreateInstance(_currentClass, args)!;
+        public object CreateInstance(params object?[]? args) => Activator.CreateInstance(currentClass, args)!;
     }
 }

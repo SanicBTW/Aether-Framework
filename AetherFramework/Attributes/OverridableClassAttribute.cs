@@ -1,9 +1,12 @@
-﻿namespace AetherFramework.Attributes
+﻿using JetBrains.Annotations;
+
+namespace AetherFramework.Attributes
 {
     /// <summary>
     /// Attribute used to mark a class as "Overridable" in the <see cref="ClassRegistry"/> while being loaded through <see cref="ClassRegistry.RegisterOverridableClasses(System.Reflection.Assembly)"/>.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [UsedImplicitly]
     public class OverridableClassAttribute : Attribute
     {
         /// <summary>

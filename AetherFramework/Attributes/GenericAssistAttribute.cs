@@ -1,9 +1,12 @@
-﻿namespace AetherFramework.Attributes
+﻿using JetBrains.Annotations;
+
+namespace AetherFramework.Attributes
 {
     /// <summary>
     /// Attribute used to assist <see cref="ClassRegistry"/> on generic instances.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [UsedImplicitly]
     public class GenericAssistAttribute : Attribute
     {
         /// <summary>

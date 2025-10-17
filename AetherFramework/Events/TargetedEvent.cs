@@ -1,4 +1,5 @@
 ﻿using AetherFramework.Interfaces;
+using JetBrains.Annotations;
 
 namespace AetherFramework.Events
 {
@@ -6,6 +7,7 @@ namespace AetherFramework.Events
     /// Represents an event that is targeted at a specific mod.
     /// Inherits from the base Event class and adds a reference to the target mod.
     /// </summary>
+    [UsedImplicitly]
     public class TargetedEvent : Event
     {
         /// <summary>

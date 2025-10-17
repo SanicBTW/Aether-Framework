@@ -7,22 +7,25 @@ namespace AetherFramework.Engines
     // TODO: Add the possibility to listen for directory changes
 
     /// <summary>
-    /// Base Modding Engine, don't use this, only use it as a extendable class on your own Modding Engine if you don't want to copy all the boilerplate code for the interface.
-    /// <para>
-    /// See <see cref="AssemblyEngine"/> for the default Modding Engine used in <see cref="ModLoader"/>.
-    /// </para>
+    /// Base Modding Engine, to make your own <see cref="IModEngine"/> to support a scripting language or extend an existing one.
+    /// <remarks>
+    /// See <see cref="AssemblyEngine"/> for the default modding engine used in the <see cref="ModLoader"/>.
+    /// </remarks>
     /// </summary>
-    public class BaseModEngine : IModEngine
+    public abstract class BaseModEngine : IModEngine
     {
         /// <summary>
         /// The <see cref="ModRegistry"/> created upon calling <see cref="BaseModEngine"/>, used to get the enabled/disabled mods from the configuration file safely.
         /// </summary>
         protected ModRegistry Registry;
 
+        /// <inheritdoc />
         public IEnumerable<IMod> LoadedMods => [..EnabledMods, ..DisabledMods];
 
+        /// <inheritdoc />
         public IEnumerable<IMod> EnabledMods => Registry.GetEnabledMods();
 
+        /// <inheritdoc />
         public IEnumerable<IMod> DisabledMods => Registry.GetDisabledMods();
 
         string IModEngine.ConfigurationProvider => Registry.GetConfigProvider().ProviderName;
@@ -32,15 +35,20 @@ namespace AetherFramework.Engines
         /// </summary>
         /// <param name="configFile">The configuration file passed to the <see cref="ModRegistry"/>.</param>
         /// <param name="config">A custom configuration provider for the <see cref="ModRegistry"/>.</param>
-        public BaseModEngine(string configFile = "aether_config.json", IModConfigProvider ?config = null)
+        protected BaseModEngine(string configFile = "aether_config.json", IModConfigProvider ?config = null)
         {
             Registry = new ModRegistry(configFile, config);
         }
 
-        void IModEngine.LoadMods(string path, string filePrefix) => throw new NotImplementedException("This method should be overriden in engines extending this class.");
+        void IModEngine.LoadMods(string path, string filePrefix) => LoadMods(path, filePrefix);
 
+        /// <inheritdoc cref="IModEngine.LoadMods"/>
+        protected abstract void LoadMods(string path, string filePrefix);
+
+        /// <inheritdoc />
         public IMod EnableMod(string modName) => Registry.EnableMod(modName);
 
+        /// <inheritdoc />
         public IMod DisableMod(string modName) => Registry.DisableMod(modName);
     }
 }

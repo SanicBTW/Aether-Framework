@@ -1,10 +1,12 @@
 ﻿using AetherFramework.Interfaces;
+using JetBrains.Annotations;
 
 namespace AetherFramework.Data
 {
     /// <summary>
     /// The Manifest Information the mod will use for the <see cref="ModRegistry"/>.
     /// </summary>
+    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
     public record ModManifest
     {
         /// <summary>

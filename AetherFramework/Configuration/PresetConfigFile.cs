@@ -1,4 +1,5 @@
 ﻿using AetherFramework.Interfaces;
+using JetBrains.Annotations;
 
 namespace AetherFramework.Configuration
 {
@@ -20,6 +21,7 @@ namespace AetherFramework.Configuration
         /// <summary>
         /// The presets saved on the configuration file.
         /// </summary>
+        [UsedImplicitly]
         public Dictionary<string, ConfigFile> Presets { get; set; } = [];
     }
 }

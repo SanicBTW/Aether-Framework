@@ -1,32 +1,37 @@
 ﻿using AetherFramework.Interfaces;
+using JetBrains.Annotations;
 
 namespace AetherFramework.Configuration
 {
     /// <summary>
     /// A <see cref="IModConfigProvider"/> for saving configuration in memory without writing to disk.
     /// </summary>
-    // ReSharper disable once UnusedMember.Global
+    [UsedImplicitly]
     public class TempConfig : IModConfigProvider
     {
-        private ModRegistry _registry = null!;
-        private readonly ConfigFile _backerConfig = new();
+        private ModRegistry registry = null!;
+        private readonly ConfigFile backerConfig = new();
 
+        /// <inheritdoc />
         public string ProviderName => "Temporary Configuration (Saved in memory)";
 
-        public void Setup(string configFile, ModRegistry registry)
+        /// <inheritdoc />
+        public void Setup(string configFile, ModRegistry modRegistry)
         {
-            _registry = registry;
+            registry = modRegistry;
 
             Save();
             Load();
         }
 
+        /// <inheritdoc />
         public void Save()
         {
-            _backerConfig.EnabledMods = [.._registry.GetEnabledMods().Select(mod => mod.Manifest.Name)];
-            _backerConfig.DisabledMods = [.._registry.GetDisabledMods().Select(mod => mod.Manifest.Name)];
+            backerConfig.EnabledMods = [..registry.GetEnabledMods().Select(mod => mod.Manifest.Name)];
+            backerConfig.DisabledMods = [..registry.GetDisabledMods().Select(mod => mod.Manifest.Name)];
         }
 
-        public ConfigFile Load() => _backerConfig;
+        /// <inheritdoc />
+        public ConfigFile Load() => backerConfig;
     }
 }

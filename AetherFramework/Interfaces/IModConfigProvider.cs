@@ -16,8 +16,8 @@ namespace AetherFramework.Interfaces
         /// Setups the configuration file in the disk.
         /// </summary>
         /// <param name="configFile">The config file name.</param>
-        /// <param name="registry">The <see cref="ModRegistry"/> that will target this <see cref="IModConfigProvider"/>.</param>
-        void Setup(string configFile, ModRegistry registry);
+        /// <param name="modRegistry">The <see cref="ModRegistry"/> that will target this <see cref="IModConfigProvider"/>.</param>
+        void Setup(string configFile, ModRegistry modRegistry);
 
         /// <summary>
         /// Saves the configuration from the <see cref="ModRegistry"/>.
@@ -30,7 +30,7 @@ namespace AetherFramework.Interfaces
         ConfigFile Load();
 
         /// <summary>
-        /// Sanitizes the given mod name to fit the <see cref="IModConfigProvider"/>s rules. 
+        /// Sanitizes the given mod name to fit the <see cref="IModConfigProvider"/>s rules.
         /// </summary>
         /// <param name="content">The mod name to sanitize.</param>
         /// <returns>A sanitized mod name used for configuration or display purposes.</returns>

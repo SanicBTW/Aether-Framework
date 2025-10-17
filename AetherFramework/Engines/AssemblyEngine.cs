@@ -6,15 +6,16 @@ namespace AetherFramework.Engines
     /// <summary>
     /// The default Modding Engine used in <see cref="ModLoader"/>, loads all the .dll files inside a designated folder and registering them.
     /// </summary>
-    public class AssemblyEngine : BaseModEngine, IModEngine
+    public class AssemblyEngine : BaseModEngine
     {
         /// <summary>
         /// Creates a new instance of an Assembly Engine.
         /// </summary>
         /// <param name="config">A custom <see cref="IModConfigProvider"/> to use in this Registry.</param>
-        public AssemblyEngine(IModConfigProvider? config = null) : base(".assemblyengine", config) { }
+        public AssemblyEngine(IModConfigProvider? config = null) : base("aether_assembly_config.json", config) { }
 
-        void IModEngine.LoadMods(string path, string filePrefix)
+        /// <inheritdoc />
+        protected override void LoadMods(string path, string filePrefix)
         {
             bool shouldCheckPrefix = !string.IsNullOrEmpty(filePrefix);
 
