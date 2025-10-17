@@ -14,10 +14,10 @@ namespace AetherFramework.Backend
         public static event Action<Type[]?> OnCacheClear = null!;
         public static event Action<Type[]?> OnHotReload = null!;
 
-        private static void ClearCache(Type[]? types)
+        private static void clearCache(Type[]? types)
             => OnCacheClear(types);
 
-        private static void UpdateApplication(Type[]? types)
+        private static void updateApplication(Type[]? types)
             => OnHotReload(types);
     }
 }

@@ -13,7 +13,7 @@ namespace AetherFramework
     /// </summary>
     public static class ClassRegistry
     {
-        private static readonly Dictionary<Type, ClassRegistryItem> classMap = [];
+        private static readonly Dictionary<Type, ClassRegistryItem> class_map = [];
 
         /// <summary>
         /// Registers all classes marked with <see cref="OverridableClassAttribute"/>.
@@ -23,40 +23,41 @@ namespace AetherFramework
         {
             foreach (Type type in assembly.GetTypes())
             {
-                // Since we aren't using the attribute anymore, we don't need to assign the attribute to a variable 
-                if (type.GetCustomAttribute<OverridableClassAttribute>() != null)
+                // Since we aren't using the attribute anymore, we don't need to assign the attribute to a variable
+                if (type.GetCustomAttribute<OverridableClassAttribute>() == null)
+                    continue;
+
+                // To avoid extra work in both places when creating a generic class, we use "GenericAssistAttribte" to get the possible types the developer will
+                // use when creating the generic class
+                if (type.IsGenericType)
                 {
-                    // To avoid extra work in both places when creating a generic class, we use "GenericAssistAttribte" to get the possible types the developer will
-                    // use when creating the generic class
-                    if (type.IsGenericType)
+                    GenericAssistAttribute genAssistant = type.GetCustomAttribute<GenericAssistAttribute>()!;
+
+                    // If no attribute was found or if the attribute was found but no types were passed, use the old method of creating generic overrides
+                    if (genAssistant.Types == null)
                     {
-                        GenericAssistAttribute genAssistant = type.GetCustomAttribute<GenericAssistAttribute>()!;
-                        // If no attribute was found or if the attribute was found but no types were passed, use the old method of creating generic overrides
-                        if (genAssistant == null || genAssistant.Types == null)
-                        {
-                            TryCreateGenericRegistry(type);
-                            continue;
-                        }
-
-                        foreach (Type genType in genAssistant.Types)
-                        {
-                            Type newType = type.MakeGenericType(genType);
-
-                            // Check if the constructed generic type is already registered
-                            if (classMap.ContainsKey(newType))
-                                continue;
-
-                            CreateRegistry(newType);
-                        }
+                        tryCreateGenericRegistry(type);
+                        continue;
                     }
-                    else
+
+                    foreach (Type genType in genAssistant.Types)
                     {
-                        // If the type is already registered, continue to the next one
-                        if (classMap.ContainsKey(type))
+                        Type newType = type.MakeGenericType(genType);
+
+                        // Check if the constructed generic type is already registered
+                        if (class_map.ContainsKey(newType))
                             continue;
 
-                        CreateRegistry(type);
+                        CreateRegistry(newType);
                     }
+                }
+                else
+                {
+                    // If the type is already registered, continue to the next one
+                    if (class_map.ContainsKey(type))
+                        continue;
+
+                    CreateRegistry(type);
                 }
             }
         }
@@ -69,7 +70,7 @@ namespace AetherFramework
         public static ClassRegistryItem CreateRegistry(Type classType)
         {
             ClassRegistryItem reg = new(classType);
-            classMap[classType] = reg;
+            class_map[classType] = reg;
             return reg;
         }
 
@@ -78,7 +79,7 @@ namespace AetherFramework
         /// </summary>
         public static void ResetClasses()
         {
-            foreach (ClassRegistryItem reg in classMap.Values)
+            foreach (ClassRegistryItem reg in class_map.Values)
             {
                 reg.ResetClass();
             }
@@ -91,7 +92,7 @@ namespace AetherFramework
         public static ClassRegistryItem[] GetRegistries()
         {
             List<ClassRegistryItem> ret = [];
-            foreach (ClassRegistryItem? reg in classMap.Values)
+            foreach (ClassRegistryItem? reg in class_map.Values)
             {
                 ret.Add(reg);
             }
@@ -108,21 +109,21 @@ namespace AetherFramework
         {
             // No heavy generic work here since when passing the T it already passes the generic type ([Type1][Type2]) so we can use that directly
             Type target = typeof(T);
-            classMap.TryGetValue(target, out ClassRegistryItem? reg);
+            class_map.TryGetValue(target, out ClassRegistryItem? reg);
             return (T)(reg?.CreateInstance(args) ?? Activator.CreateInstance(target, args))!;
         }
 
         /// <summary>
         /// Overwrite a class with a new class.
         /// </summary>
-        /// <typeparam name="From">The class to overwrite.</typeparam>
-        /// <typeparam name="To">The class to overwrite with.</typeparam>
-        public static void OverwriteClass<From, To>() where From : class where To : class
+        /// <typeparam name="TFrom">The class to overwrite.</typeparam>
+        /// <typeparam name="TO">The class to overwrite with.</typeparam>
+        public static void OverwriteClass<TFrom, TO>() where TFrom : class where TO : class
         {
-            classMap.TryGetValue(typeof(From), out ClassRegistryItem? reg);
+            class_map.TryGetValue(typeof(TFrom), out ClassRegistryItem? reg);
             if (reg != null)
             {
-                reg.SetClass(typeof(To));
+                reg.SetClass(typeof(TO));
                 EventManager.TriggerGlobalEvent(new ClassOverwrittenEvent(reg));
             }
         }
@@ -131,8 +132,8 @@ namespace AetherFramework
         // Since the generic classes CAN have multiple type parameters or something, we check for EACH generic argument in the type
         // I think this doesn't account for those type of classes where the generic type isn't assigned to a known type
         // Should totally look into it but for now it works on known types which is a big step taken
-        // In future versions, a source generator should take care of this properly 
-        private static void TryCreateGenericRegistry(Type type)
+        // In future versions, a source generator should take care of this properly
+        private static void tryCreateGenericRegistry(Type type)
         {
             if (!type.ContainsGenericParameters)
                 throw new InvalidOperationException("Cannot continue creating this generic class.");
@@ -146,7 +147,7 @@ namespace AetherFramework
                 Type newType = type.MakeGenericType(genType.BaseType);
 
                 // Check if the constructed generic type is already registered
-                if (classMap.ContainsKey(newType))
+                if (class_map.ContainsKey(newType))
                     continue;
 
                 CreateRegistry(newType);
