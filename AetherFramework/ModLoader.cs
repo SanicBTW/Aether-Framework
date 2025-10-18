@@ -2,6 +2,7 @@
 using AetherFramework.Engines;
 using AetherFramework.Events;
 using AetherFramework.Interfaces;
+using JetBrains.Annotations;
 
 namespace AetherFramework
 {
@@ -10,6 +11,7 @@ namespace AetherFramework
     /// <summary>
     /// The heart of Aether Framework.
     /// </summary>
+    [UsedImplicitly(ImplicitUseKindFlags.Access | ImplicitUseKindFlags.InstantiatedWithFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
     public class ModLoader
     {
         // i believe IT is getting set before exiting the constructor, since the passed engine IS null by default, it will fallback into Assembly Engine, im gonna go lucid bruh

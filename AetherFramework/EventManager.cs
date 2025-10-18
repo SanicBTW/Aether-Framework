@@ -271,7 +271,7 @@ namespace AetherFramework
         {
             if (mod_registries.Count == 0)
             {
-                logger($"There are no Mod Registries available");
+                logger("There are no Mod Registries available");
                 return;
             }
 
@@ -280,7 +280,7 @@ namespace AetherFramework
 
             if (eventInstance.TargetMod != null)
             {
-                logger($"Cannot dispatch a TargetedEvent by an Intent if the mod inside the TargetedEvent isn't null");
+                logger("Cannot dispatch a TargetedEvent by an Intent if the mod inside the TargetedEvent isn't null");
                 return;
             }
 
@@ -289,7 +289,7 @@ namespace AetherFramework
                 IEnumerable<IMod> targetMods = registry.GetModsByIntent(intent);
                 foreach (IMod mod in targetMods)
                 {
-                    if (eventInstance is TargetedEvent targetedEvent)
+                    if (eventInstance is { } targetedEvent)
                     {
                         targetedEvent.TargetMod = mod;
                         TriggerTargetedEvent(targetedEvent);

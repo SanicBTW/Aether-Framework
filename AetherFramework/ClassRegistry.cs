@@ -27,37 +27,36 @@ namespace AetherFramework
                 if (type.GetCustomAttribute<OverridableClassAttribute>() == null)
                     continue;
 
-                // To avoid extra work in both places when creating a generic class, we use "GenericAssistAttribte" to get the possible types the developer will
-                // use when creating the generic class
-                if (type.IsGenericType)
-                {
-                    GenericAssistAttribute genAssistant = type.GetCustomAttribute<GenericAssistAttribute>()!;
-
-                    // If no attribute was found or if the attribute was found but no types were passed, use the old method of creating generic overrides
-                    if (genAssistant.Types == null)
-                    {
-                        tryCreateGenericRegistry(type);
-                        continue;
-                    }
-
-                    foreach (Type genType in genAssistant.Types)
-                    {
-                        Type newType = type.MakeGenericType(genType);
-
-                        // Check if the constructed generic type is already registered
-                        if (class_map.ContainsKey(newType))
-                            continue;
-
-                        CreateRegistry(newType);
-                    }
-                }
-                else
+                if (!type.IsGenericType)
                 {
                     // If the type is already registered, continue to the next one
                     if (class_map.ContainsKey(type))
                         continue;
 
                     CreateRegistry(type);
+                    continue;
+                }
+
+                // To avoid extra work in both places when creating a generic class, we use "GenericAssistAttribte" to get the possible types the developer will
+                // use when creating the generic class
+                GenericAssistAttribute? genAssistant = type.GetCustomAttribute<GenericAssistAttribute>();
+
+                // If no attribute was found or if the attribute was found but no types were passed, use the old method of creating generic overrides
+                if (genAssistant == null || genAssistant.Types == null)
+                {
+                    tryCreateGenericRegistry(type);
+                    continue;
+                }
+
+                foreach (Type genType in genAssistant.Types)
+                {
+                    Type newType = type.MakeGenericType(genType);
+
+                    // Check if the constructed generic type is already registered
+                    if (class_map.ContainsKey(newType))
+                        continue;
+
+                    CreateRegistry(newType);
                 }
             }
         }
