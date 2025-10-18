@@ -11,7 +11,7 @@
         <Company>xhyabunny</Company>
         <PackageTags>Modding, Framework</PackageTags>
 
-        <PackageReleaseNotes>Overhauled the configuration system and improved the Assembly engine.</PackageReleaseNotes>
+        <PackageReleaseNotes>First beta for Aether 1.2, overhauled the configuration system, fixed code styling and unified the Hot Reload events.</PackageReleaseNotes>
 
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
