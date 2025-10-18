@@ -52,9 +52,9 @@ namespace AetherFramework
 
             // Since the lists get populated upon config loading, it makes sense to call the
             // necessary callbacks so we dont call "Enable/DisableMod" triggering stuff incorrectly
-            if (disabledMods.Contains(newMod.Manifest.Name))
-                newMod.OnDisable();
-            else
+            // ive thought about this and it makes sense to only call on enable since the mod by itself
+            // is in a type of "unloaded" or already disabled state, so we avoid any issues by not calling on disable
+            if (enabledMods.Contains(newMod.Manifest.Name))
                 newMod.OnEnable();
         }
 

@@ -28,7 +28,7 @@ namespace AetherFramework.Engines
         /// <inheritdoc />
         public IEnumerable<IMod> DisabledMods => Registry.GetDisabledMods();
 
-        string IModEngine.ConfigurationProvider => Registry.GetConfigProvider().ProviderName;
+        IModConfigProvider IModEngine.Configuration => Registry.GetConfigProvider();
 
         /// <summary>
         /// Creates a new <see cref="BaseModEngine"/>.

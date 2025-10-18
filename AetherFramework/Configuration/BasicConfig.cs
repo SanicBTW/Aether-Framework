@@ -14,6 +14,7 @@ namespace AetherFramework.Configuration
         private string configPath = "";
 
         // gets used on save calls and load calls to avoid creating new instances
+        private bool loadedConfig;
         private PresetConfigFile backerConfig = new();
 
         /// <inheritdoc />
@@ -49,6 +50,10 @@ namespace AetherFramework.Configuration
         /// <inheritdoc />
         public ConfigFile Load()
         {
+            // maybe i should make this uhh thread-safe?
+            if (loadedConfig)
+                return backerConfig;
+
             string content = File.ReadAllText(configPath);
             backerConfig = JsonSerializer.Deserialize<PresetConfigFile>(content) ?? new PresetConfigFile();
 
@@ -59,6 +64,7 @@ namespace AetherFramework.Configuration
             // 16/10/2025 - uhh took me a whole year to come back to im so sorry it took me so long to finish such a good idea bruh
             // 17/10/2025 - idk what i meant by that first comment but uhh idk yeah
 
+            loadedConfig = true;
             return backerConfig;
         }
     }

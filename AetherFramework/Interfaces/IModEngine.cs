@@ -22,9 +22,9 @@
         IEnumerable<IMod> DisabledMods { get; }
 
         /// <summary>
-        /// The configuration provider type from this <see cref="IModEngine"/> usually coming from a <see cref="ModRegistry"/>.
+        /// The configuration provider from this <see cref="IModEngine"/> usually coming from a <see cref="ModRegistry"/>.
         /// </summary>
-        string ConfigurationProvider { get; }
+        IModConfigProvider Configuration { get; }
 
         /// <summary>
         /// Enables a disabled mod.

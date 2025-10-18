@@ -34,9 +34,9 @@ namespace AetherFramework
         public IEnumerable<IMod> DisabledMods => engine.DisabledMods;
 
         /// <summary>
-        /// The configuration provider type from this <see cref="ModLoader"/> usually coming from a <see cref="IModEngine"/>.
+        /// The configuration provider from this <see cref="ModLoader"/> usually coming from a <see cref="IModEngine"/>.
         /// </summary>
-        public string ConfigurationProvider => engine.ConfigurationProvider;
+        public IModConfigProvider Configuration => engine.Configuration;
 
         /// <summary>
         /// Loads all the <see cref="IMod"/>s available using the provided arguments to be as modular as possible.
