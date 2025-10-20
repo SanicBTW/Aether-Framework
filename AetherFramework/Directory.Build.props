@@ -11,14 +11,14 @@
         <Company>xhyabunny</Company>
         <PackageTags>Modding, Framework</PackageTags>
 
-        <PackageReleaseNotes>First beta for Aether 1.2, overhauled the configuration system, fixed code styling and unified the Hot Reload events.</PackageReleaseNotes>
+        <PackageReleaseNotes>Expose the configuration provider rather than only the name of it, tweaked mod registration.</PackageReleaseNotes>
 
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 
-        <VersionPrefix>1.2.0-beta1</VersionPrefix>
-        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+        <VersionPrefix>1.2.0-beta2</VersionPrefix>
+        <AssemblyVersion>1.2.0</AssemblyVersion>
         <FileVersion>$(AssemblyVersion)</FileVersion>
     </PropertyGroup>
 
