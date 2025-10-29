@@ -11,13 +11,13 @@
         <Company>xhyabunny</Company>
         <PackageTags>Modding, Framework</PackageTags>
 
-        <PackageReleaseNotes>Expose the configuration provider rather than only the name of it, tweaked mod registration.</PackageReleaseNotes>
+        <PackageReleaseNotes>Make the ModLoader accept an entire path rather than forcing it, Hot Reload events are now fired globally rather than using an action to listen to them.</PackageReleaseNotes>
 
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 
-        <VersionPrefix>1.2.0-beta2</VersionPrefix>
+        <VersionPrefix>1.2.0-beta3</VersionPrefix>
         <AssemblyVersion>1.2.0</AssemblyVersion>
         <FileVersion>$(AssemblyVersion)</FileVersion>
     </PropertyGroup>

@@ -1,4 +1,5 @@
 ﻿using AetherFramework.Backend;
+using AetherFramework.Events;
 
 // https://www.meziantou.net/supporting-hot-reload-in-your-dotnet-application.htm
 
@@ -11,13 +12,10 @@ namespace AetherFramework.Backend
     /// </summary>
     internal static class HotReloadHandler
     {
-        public static event Action<Type[]?> OnCacheClear = null!;
-        public static event Action<Type[]?> OnHotReload = null!;
-
         private static void clearCache(Type[]? types)
-            => OnCacheClear(types);
+            => EventManager.TriggerGlobalEvent(new HotReloadEvent(types));
 
         private static void updateApplication(Type[]? types)
-            => OnHotReload(types);
+            => EventManager.TriggerGlobalEvent(new HotReloadEvent(newTypes: types));
     }
 }
