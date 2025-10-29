@@ -9,12 +9,12 @@ namespace AetherFramework.Events
     public class HotReloadEvent : Event
     {
         /// <summary>
-        /// An array of <see cref="Type"/>s that are passed by the <see cref="Backend.HotReloadHandler.OnCacheClear"/> event.
+        /// An array of <see cref="Type"/>s that are passed by the <see cref="Backend.HotReloadHandler"/> event.
         /// </summary>
         public readonly Type[]? ClearTypes;
 
         /// <summary>
-        /// An array of <see cref="Type"/>s that are passed by the <see cref="Backend.HotReloadHandler.OnHotReload"/> event.
+        /// An array of <see cref="Type"/>s that are passed by the <see cref="Backend.HotReloadHandler"/> event.
         /// </summary>
         public readonly Type[]? NewTypes;
 
