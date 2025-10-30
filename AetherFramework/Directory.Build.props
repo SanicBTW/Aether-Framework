@@ -11,13 +11,15 @@
         <Company>xhyabunny</Company>
         <PackageTags>Modding, Framework</PackageTags>
 
-        <PackageReleaseNotes>Make the ModLoader accept an entire path rather than forcing it, Hot Reload events are now fired globally rather than using an action to listen to them.</PackageReleaseNotes>
+        <PackageReleaseNotes>
+          Added a custom Logging class for all the framework classes, reduce string usage on ModRegistry.
+        </PackageReleaseNotes>
 
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 
-        <VersionPrefix>1.2.0-beta3</VersionPrefix>
+        <VersionPrefix>1.2.0-beta4</VersionPrefix>
         <AssemblyVersion>1.2.0</AssemblyVersion>
         <FileVersion>$(AssemblyVersion)</FileVersion>
     </PropertyGroup>
