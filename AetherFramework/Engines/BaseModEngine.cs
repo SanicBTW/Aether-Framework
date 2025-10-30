@@ -20,7 +20,7 @@ namespace AetherFramework.Engines
         protected ModRegistry Registry;
 
         /// <inheritdoc />
-        public IEnumerable<IMod> LoadedMods => [..EnabledMods, ..DisabledMods];
+        public IEnumerable<IMod> LoadedMods => Registry.GetLoadedMods();
 
         /// <inheritdoc />
         public IEnumerable<IMod> EnabledMods => Registry.GetEnabledMods();

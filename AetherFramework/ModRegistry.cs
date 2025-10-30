@@ -1,6 +1,5 @@
 ﻿using AetherFramework.Configuration;
 using AetherFramework.Interfaces;
-using System.Diagnostics;
 
 namespace AetherFramework
 {
@@ -10,10 +9,11 @@ namespace AetherFramework
     public class ModRegistry
     {
         private readonly IModConfigProvider config;
+        private readonly IAetherLogger logger;
 
         private readonly List<IMod> mods = [];
-        private List<string> enabledMods = [];
-        private List<string> disabledMods = [];
+        private List<IMod> enabledMods = [];
+        private List<IMod> disabledMods = [];
 
         /// <summary>
         /// Creates a Mod Registry to use in a <see cref="IModEngine"/>.
@@ -24,6 +24,7 @@ namespace AetherFramework
         {
             this.config = config ?? new BasicConfig();
             this.config.Setup(configFile, this);
+            logger = AetherLog.CreateScoped("modregistry");
             EventManager.AddModRegistry(this);
         }
 
@@ -40,10 +41,10 @@ namespace AetherFramework
             newMod.Manifest.Name = config.SanitizeModName(newMod.Manifest.Name);
 
             mods.Add(newMod);
-            Debug.WriteLine($"Registered new mod! {newMod.Manifest.Name} by {newMod.Manifest.Author}, Version {newMod.Manifest.Version}.");
+            logger.Info($"Registered new mod! {newMod.Manifest.Name} by {newMod.Manifest.Author}, Version {newMod.Manifest.Version}.");
 
             // No configuration file found, no mods loaded, enable all of them / new mod not found in the config file
-            if (!enabledMods.Contains(newMod.Manifest.Name) && !disabledMods.Contains(newMod.Manifest.Name))
+            if (!enabledMods.Contains(newMod) && !disabledMods.Contains(newMod))
             {
                 // this already calls onEnable, so we return to avoid going to the next part of the code
                 EnableMod(newMod.Manifest.Name);
@@ -54,7 +55,7 @@ namespace AetherFramework
             // necessary callbacks so we dont call "Enable/DisableMod" triggering stuff incorrectly
             // ive thought about this and it makes sense to only call on enable since the mod by itself
             // is in a type of "unloaded" or already disabled state, so we avoid any issues by not calling on disable
-            if (enabledMods.Contains(newMod.Manifest.Name))
+            if (enabledMods.Contains(newMod))
                 newMod.OnEnable();
         }
 
@@ -62,18 +63,18 @@ namespace AetherFramework
         /// Gets the enabled mods from the <see cref="IModConfigProvider"/>.
         /// </summary>
         /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s that are enabled.</returns>
-        public IEnumerable<IMod> GetEnabledMods() => mods.Where((mod) => enabledMods.Contains(mod.Manifest.Name));
+        public IEnumerable<IMod> GetEnabledMods() => enabledMods;
 
         /// <inheritdoc cref="IModEngine.EnableMod(string)"/>
         public IMod EnableMod(string modName)
         {
             IMod target = ensureRegistry(modName);
 
-            disabledMods.Remove(modName);
+            disabledMods.Remove(target);
 
-            if (!enabledMods.Contains(modName))
+            if (!enabledMods.Contains(target))
             {
-                enabledMods.Add(modName);
+                enabledMods.Add(target);
 
                 // Apparently I had an issue where this was outside of this if condition and it would run 3 times in a single call, a lil bit wild if you ask me
                 config.Save();
@@ -87,18 +88,18 @@ namespace AetherFramework
         /// Gets the disabled mods from the <see cref="IModConfigProvider"/>.
         /// </summary>
         /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s that are disabled.</returns>
-        public IEnumerable<IMod> GetDisabledMods() => mods.Where((mod) => disabledMods.Contains(mod.Manifest.Name));
+        public IEnumerable<IMod> GetDisabledMods() => disabledMods;
 
         /// <inheritdoc cref="IModEngine.DisableMod(string)"/>
         public IMod DisableMod(string modName)
         {
             IMod target = ensureRegistry(modName);
 
-            enabledMods.Remove(modName);
+            enabledMods.Remove(target);
 
-            if (!disabledMods.Contains(modName))
+            if (!disabledMods.Contains(target))
             {
-                disabledMods.Add(modName);
+                disabledMods.Add(target);
                 config.Save();
                 target.OnDisable();
             }
@@ -120,6 +121,12 @@ namespace AetherFramework
         public IEnumerable<IMod> GetModsByIntent(string intent) => mods.Where(mod => mod.Intents.Contains(intent));
 
         /// <summary>
+        /// Gets a list of <see cref="IMod"/>s that are currently loaded in this <see cref="ModRegistry"/>.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerable{IMod}"/> of <see cref="IMod"/>s loaded.</returns>
+        public IEnumerable<IMod> GetLoadedMods() => mods;
+
+        /// <summary>
         /// Calls <see cref="IModConfigProvider.Load"/> to retrieve the saved configuration and apply it to the current <see cref="ModRegistry"/>.
         /// <para>Should not be manually called.</para>
         /// </summary>
@@ -127,12 +134,12 @@ namespace AetherFramework
         {
             ConfigFile loaded = config.Load();
 
-            enabledMods = loaded.EnabledMods;
-            disabledMods = loaded.DisabledMods;
+            enabledMods = mods.Where(m => loaded.EnabledMods.Contains(m.Manifest.Name)).ToList();
+            disabledMods = mods.Where(m => loaded.DisabledMods.Contains(m.Manifest.Name)).ToList();
 
             if (loaded is PresetConfigFile presetConfig)
             {
-                Debug.WriteLine(presetConfig.CurrentPreset);
+                logger.Debug(presetConfig.CurrentPreset);
             }
         }
 
