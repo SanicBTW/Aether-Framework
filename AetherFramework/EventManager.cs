@@ -1,7 +1,6 @@
 ﻿using AetherFramework.Events;
 using AetherFramework.Interfaces;
 using System.Collections.Concurrent;
-using System.Diagnostics;
 
 namespace AetherFramework
 {
@@ -42,8 +41,7 @@ namespace AetherFramework
         // HashSet of all the mod registries created in the whole modding framework.
         private static readonly HashSet<ModRegistry> mod_registries = [];
 
-        // For logging and monitoring
-        private static Action<string> logger = msg => Debug.WriteLine(msg); // Default logger to the Debug Output
+        private static readonly IAetherLogger logger = AetherLog.CreateScoped("eventmanager");
 
         /// <summary>
         /// Registers a new event handler in the Manager.
@@ -102,12 +100,6 @@ namespace AetherFramework
         }
 
         /// <summary>
-        /// Sets the logger action used for logging event-related activities.
-        /// </summary>
-        /// <param name="newLogger">The logger action.</param>
-        public static void SetLogger(Action<string> newLogger) => logger = newLogger ?? throw new ArgumentNullException(nameof(newLogger));
-
-        /// <summary>
         /// Adds a new <see cref="ModRegistry"/> to the <see cref="EventManager"/> for <see cref="IMod"/> resolutions on event triggering.
         /// </summary>
         /// <param name="newRegistry">A new <see cref="ModRegistry"/> created from a <see cref="IModEngine"/>.</param>
@@ -135,7 +127,7 @@ namespace AetherFramework
                     return bag;
                 });
 
-            logger($"Registered global event handler for {eventType.Name}.");
+            logger.Info($"Registered global event handler for {eventType.Name}.");
         }
 
         /// <summary>
@@ -160,7 +152,7 @@ namespace AetherFramework
                     global_events.TryRemove(eventType, out _);
             }
 
-            logger($"Unregistered global event handler for {eventType.Name}.");
+            logger.Info($"Unregistered global event handler for {eventType.Name}.");
         }
 
         /// <summary>
@@ -206,7 +198,7 @@ namespace AetherFramework
                     return bag;
                 });
 
-            logger($"Registered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
+            logger.Info($"Registered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
         }
 
         /// <summary>
@@ -241,7 +233,7 @@ namespace AetherFramework
                 }
             }
 
-            logger($"Unregistered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
+            logger.Info($"Unregistered targeted event handler for {eventType.Name} on mod {mod.Manifest.Name}.");
         }
 
         /// <summary>
@@ -271,7 +263,7 @@ namespace AetherFramework
         {
             if (mod_registries.Count == 0)
             {
-                logger("There are no Mod Registries available");
+                logger.Warn("There are no Mod Registries available");
                 return;
             }
 
@@ -280,7 +272,7 @@ namespace AetherFramework
 
             if (eventInstance.TargetMod != null)
             {
-                logger("Cannot dispatch a TargetedEvent by an Intent if the mod inside the TargetedEvent isn't null");
+                logger.Warn("Cannot dispatch a TargetedEvent by an Intent if the mod inside the TargetedEvent isn't null");
                 return;
             }
 
@@ -296,7 +288,7 @@ namespace AetherFramework
                     }
                     else
                     {
-                        logger($"Event is not a TargetedEvent: {eventInstance.GetType()}");
+                        logger.Warn($"Event is not a TargetedEvent: {eventInstance.GetType()}");
                         break;
                     }
 
@@ -321,7 +313,7 @@ namespace AetherFramework
                 }
                 catch (Exception ex)
                 {
-                    logger($"Exception while dispatching handlers for {eventInstance.GetType().Name}: {ex}");
+                    logger.Error($"Exception while dispatching handlers for {eventInstance.GetType().Name}: {ex}");
                 }
             }
         }
